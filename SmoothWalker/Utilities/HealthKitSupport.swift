@@ -55,6 +55,8 @@ private func preferredUnit(for identifier: String, sampleType: HKSampleType? = n
             unit = .count()
         case .distanceWalkingRunning, .sixMinuteWalkTestDistance:
             unit = .meter()
+        case .walkingSpeed:
+            unit = HKUnit.meter().unitDivided(by: HKUnit.second())
         default:
             break
         }
@@ -86,8 +88,26 @@ func getLastWeekStartDate(from date: Date = Date()) -> Date {
     return Calendar.current.date(byAdding: .day, value: -6, to: date)!
 }
 
+func getLastMonthStartDate(from date: Date = Date()) -> Date {
+    return Calendar.current.date(byAdding: .month, value: -1, to: date)!
+}
+
+func getLastDayStartDate(from date: Date = Date()) -> Date {
+    return Calendar.current.date(byAdding: .day, value: -1, to: date)!
+}
+
 func createLastWeekPredicate(from endDate: Date = Date()) -> NSPredicate {
     let startDate = getLastWeekStartDate(from: endDate)
+    return HKQuery.predicateForSamples(withStart: startDate, end: endDate)
+}
+
+func createLastMonthPredicate(from endDate: Date = Date()) -> NSPredicate {
+    let startDate = getLastMonthStartDate()
+    return HKQuery.predicateForSamples(withStart: startDate, end: endDate)
+}
+
+func createLastDayPredicate(from endDate: Date = Date()) -> NSPredicate {
+    let startDate = getLastDayStartDate()
     return HKQuery.predicateForSamples(withStart: startDate, end: endDate)
 }
 
@@ -103,6 +123,8 @@ func getStatisticsOptions(for dataTypeIdentifier: String) -> HKStatisticsOptions
         case .stepCount, .distanceWalkingRunning:
             options = .cumulativeSum
         case .sixMinuteWalkTestDistance:
+            options = .discreteAverage
+        case .walkingSpeed:
             options = .discreteAverage
         default:
             break
