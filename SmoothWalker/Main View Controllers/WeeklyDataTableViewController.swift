@@ -113,5 +113,7 @@ class WeeklyQuantitySampleTableViewController: HealthDataTableViewController, He
             self.healthStore.stop(query)
         }
     }
+    
+
 }
 
